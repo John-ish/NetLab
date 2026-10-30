@@ -1,0 +1,81 @@
+#settings-panel {
+    width: 100%;
+    height: 100%;
+    padding: 0 1 1 1;
+    border: round $error-darken-1;
+    border-title-color: $error;
+    border-title-style: bold;
+    border-title-align: center;
+    border-subtitle-align: center;
+    background: $background;
+}
+
+#settings-scroll {
+    width: 100%;
+    height: 1fr;
+    scrollbar-size-vertical: 1;
+    scrollbar-background: $background;
+    scrollbar-background-hover: $background;
+    scrollbar-background-active: $background;
+    scrollbar-color: $error-darken-1;
+    scrollbar-color-hover: $error;
+    scrollbar-color-active: $error;
+}
+
+.set-section {
+    width: 100%;
+    height: 2;
+    margin-top: 1;
+    color: $error;
+    text-style: bold;
+    border-bottom: solid $error-darken-1;
+}
+
+SettingRow {
+    layout: horizontal;
+    width: 100%;
+    height: 1;
+    padding: 0 1;
+    background: transparent;
+}
+
+SettingRow .set-cursor {
+    width: 3;
+    color: $error;
+    text-opacity: 0%;
+    text-style: bold;
+}
+
+SettingRow .set-label {
+    width: 28;
+    color: $text;
+}
+
+SettingRow .set-value {
+    width: 1fr;
+}
+
+SettingRow:focus {
+    background: $row;
+}
+
+SettingRow:focus .set-cursor {
+    text-opacity: 100%;
+}
+
+SettingRow:focus .set-label {
+    text-style: bold;
+}
+
+SettingRow.-disabled .set-label {
+    color: $text-muted;
+}
+
+#set-help {
+    width: 100%;
+    height: auto;
+    min-height: 2;
+    margin-top: 1;
+    padding: 0 1;
+    color: $text-muted;
+}

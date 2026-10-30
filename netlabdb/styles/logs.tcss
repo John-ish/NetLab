@@ -1,0 +1,84 @@
+#filters {
+    height: 1;
+    margin-top: 1;
+    padding: 0 1;
+}
+
+#filters .chip {
+    width: 1fr;
+    max-width: 32;
+    height: 1;
+    margin-right: 2;
+}
+
+#filters Select {
+    width: 1fr;
+    min-width: 10;
+    height: 1;
+}
+
+.flabel {
+    width: auto;
+    height: 1;
+    color: $text-muted;
+    margin-right: 1;
+}
+
+.log-cursor { width: 3;  padding-left: 1; }
+
+.log-time   { width: 14; }
+
+.log-type   { width: 14; }
+
+.log-event  { width: 1fr; }
+
+#log-list {
+    height: 1fr;
+    border: none;
+    background: transparent;
+    scrollbar-size-vertical: 1;
+    scrollbar-background: $background;
+    scrollbar-background-hover: $background;
+    scrollbar-background-active: $background;
+    scrollbar-color: $error-darken-1;
+    scrollbar-color-hover: $error;
+    scrollbar-color-active: $error;
+}
+
+#log-list:focus {
+    border: none;
+}
+
+LogRow {
+    layout: horizontal;
+    height: 1;
+    background: transparent;
+}
+
+LogRow .log-time { color: $text-muted; }
+
+LogRow .log-type { color: $error; }
+
+LogRow .lvl-info    { color: $text; }
+
+LogRow .lvl-warning { color: $warning; }
+
+LogRow .lvl-error   { color: $bad; }
+
+LogRow .log-cursor {
+    color: $error;
+    text-opacity: 0%;
+    text-style: bold;
+}
+
+#log-list > LogRow.-highlight {
+    background: $row;
+}
+
+#log-list > LogRow.-highlight .log-cursor {
+    text-opacity: 100%;
+}
+
+#log-list > LogRow.-highlight .log-event {
+    text-style: bold;
+}

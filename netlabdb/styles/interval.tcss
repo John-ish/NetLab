@@ -1,0 +1,57 @@
+IntervalScreen {
+    align: center middle;
+    background: $shade;
+}
+
+#interval-panel {
+    width: 50;
+    max-width: 90%;
+    height: auto;
+    padding: 0 2 1 2;
+    border: round $error;
+    background: $background;
+    border-title-color: $error;
+    border-title-style: bold;
+    border-title-background: $background;
+    border-title-align: center;
+    border-subtitle-align: center;
+    border-subtitle-background: $background;
+}
+
+#interval-body {
+    height: auto;
+    margin: 1 0;
+}
+
+#interval-panel Select {
+    width: 1fr;
+    height: 1;
+}
+
+#interval-buttons {
+    height: 1;
+    margin-top: 1;
+    align-horizontal: center;
+}
+
+#interval-buttons Button {
+    width: auto;
+    min-width: 0;
+    height: 1;
+    border: none;
+    padding: 0 2;
+    margin: 0 1;
+    background: $tint;
+    color: $text;
+    text-style: none;
+}
+
+#interval-buttons Button:hover {
+    background: $tint-hover;
+}
+
+#interval-buttons Button:focus {
+    background: $error;
+    color: $on-accent;
+    text-style: bold;
+}

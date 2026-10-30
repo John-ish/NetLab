@@ -1,0 +1,70 @@
+MetricDetailScreen {
+    align: center middle;
+    background: $shade;
+}
+
+#metric-panel {
+    width: 92%;
+    max-width: 120;
+    height: 92%;
+    padding: 0 2 1 2;
+    border: round $error;
+    background: $background;
+    border-title-color: $error;
+    border-title-style: bold;
+    border-title-background: $background;
+    border-title-align: center;
+    border-subtitle-align: center;
+    border-subtitle-background: $background;
+}
+
+#metric-meta {
+    height: 1;
+    margin-bottom: 1;
+    color: $text-muted;
+}
+
+#metric-scroll {
+    height: 1fr;
+    scrollbar-size-vertical: 1;
+    scrollbar-background: $background;
+    scrollbar-background-hover: $background;
+    scrollbar-background-active: $background;
+    scrollbar-color: $error-darken-1;
+    scrollbar-color-hover: $error;
+    scrollbar-color-active: $error;
+}
+
+#metric-body {
+    width: 100%;
+}
+
+#range-bar {
+    height: 1;
+    margin-bottom: 1;
+}
+
+#range-label {
+    width: auto;
+    margin-right: 2;
+    color: $text-muted;
+}
+
+.range-opt {
+    width: auto;
+    height: 1;
+    padding: 0 2;
+    margin-right: 1;
+    color: $text;
+    background: $tint;
+}
+
+.range-opt:hover {
+    background: $tint-hover;
+}
+
+.range-opt.-active {
+    background: $error;
+    color: $on-accent;
+    text-style: bold;
+}

@@ -1,0 +1,162 @@
+#detail-panel {
+    width: 100%;
+    height: 100%;
+    padding: 0 1 1 1;
+    border: round $error-darken-1;
+    border-title-color: $error;
+    border-title-style: bold;
+    border-title-align: center;
+    border-subtitle-align: center;
+    background: $background;
+    overflow: hidden;
+}
+
+#detail-scroll {
+    width: 100%;
+    height: 1fr;
+    scrollbar-size-vertical: 1;
+    scrollbar-background: $background;
+    scrollbar-background-hover: $background;
+    scrollbar-background-active: $background;
+    scrollbar-color: $error-darken-1;
+    scrollbar-color-hover: $error;
+    scrollbar-color-active: $error;
+}
+
+#detail-top { height: 7; }
+
+#detail-cards { height: 6; }
+
+#detail-bottom { height: 1fr; min-height: 9; }
+
+#host-box, DetailCard, #svc-box {
+    border: round $error-darken-1;
+    padding: 0 1;
+    margin-right: 1;
+    background: $background;
+    border-title-color: $error;
+    border-title-style: bold;
+    border-subtitle-color: $error-darken-1;
+    border-subtitle-align: right;
+    overflow: hidden;
+}
+
+DetailCard:focus {
+    border: round $error;
+    border-subtitle-color: $error;
+}
+
+#svc-box:focus-within {
+    border: round $error;
+}
+
+#host-box { width: 1fr; height: 100%; }
+
+#card-sysinfo { width: 1fr; height: 100%; margin-right: 0; }
+
+#card-alerts { width: 1fr; height: auto; margin-right: 0; }
+
+#detail-cards DetailCard { width: 1fr; height: 100%; }
+
+#card-latency { margin-right: 0; }
+
+#svc-box { width: 3fr; height: 100%; }
+
+#card-monitor { width: 2fr; height: 100%; margin-right: 0; }
+
+#host-box Static, DetailCard Static {
+    width: 1fr;
+}
+
+.card-value {
+    height: 1;
+    text-style: bold;
+}
+
+.card-value.ok { color: $success; }
+
+.card-value.warning { color: $warning; }
+
+.card-value.critical { color: $bad; }
+
+.card-sub {
+    height: 1;
+    color: $text-muted;
+}
+
+.card-spark { height: 2; }
+
+#spark-cpu { color: $primary; }
+
+#spark-mem { color: $secondary; }
+
+#spark-disk { color: $success; }
+
+#spark-net { color: $warning; }
+
+#spark-gpu { color: $error; }
+
+#spark-latency { color: $accent; }
+
+#svc-box #header {
+    margin-top: 0;
+}
+
+.col-port { width: 3fr; }
+
+#detail-services {
+    height: 1fr;
+    border: none;
+    background: transparent;
+    scrollbar-size-vertical: 1;
+    scrollbar-background: $background;
+    scrollbar-background-hover: $background;
+    scrollbar-background-active: $background;
+    scrollbar-color: $error-darken-1;
+    scrollbar-color-hover: $error;
+    scrollbar-color-active: $error;
+}
+
+#detail-services:focus {
+    border: none;
+}
+
+#detail-svc-empty {
+    display: none;
+    margin-top: 1;
+}
+
+ServiceItem {
+    layout: horizontal;
+    height: 1;
+    background: transparent;
+}
+
+ServiceItem .col-name { color: $text; }
+
+ServiceItem .col-port { color: $error; }
+
+ServiceItem .col-latency { color: $text; }
+
+ServiceItem .col-cursor {
+    color: $error;
+    text-opacity: 0%;
+    text-style: bold;
+}
+
+ServiceItem .up { color: $success; }
+
+ServiceItem .warning { color: $warning; }
+
+ServiceItem .down { color: $bad; }
+
+ServiceItem .pending { color: $text-muted; }
+
+#detail-services > ServiceItem.-highlight {
+    background: $row;
+    color: $text;
+}
+
+#detail-services > ServiceItem.-highlight .col-cursor {
+    text-opacity: 100%;
+}

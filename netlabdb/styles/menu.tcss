@@ -1,0 +1,39 @@
+Main_menu {
+    align: center middle;
+    background: $shade;
+}
+
+Main_menu > ListView {
+    width: 30;
+    height: auto;
+    max-height: 12;
+    border: round $error;
+    outline: none;
+    background: $background;
+    border-title-color: $error;
+    border-title-background: $background;
+    border-title-align: center;
+
+}
+
+MenuItem {
+    layout: horizontal;
+    padding: 0 1;
+}
+
+MenuItem Label {
+    width: 1fr;
+}
+
+MenuItem.-active {
+    background: $row-hover;
+    text-style: bold;
+
+
+    color: $row-text;
+}
+
+Main_menu > ListView:focus {
+    background: $background;
+    background-tint: transparent;
+}

@@ -1,0 +1,124 @@
+#summary {
+    width: 100%;
+    height: 1;
+    margin: 0 0 1 0;
+    padding: 0 1;
+}
+
+#summary Static {
+    width: auto;
+    margin-right: 6;
+}
+
+.sum-running { color: $success; }
+
+.sum-warning { color: $warning; }
+
+.sum-stopped { color: $text-muted; }
+
+#svc-scroll {
+    height: 1fr;
+}
+
+#svc-scroll, #host-list {
+    scrollbar-size-vertical: 1;
+    scrollbar-background: $background;
+    scrollbar-background-hover: $background;
+    scrollbar-background-active: $background;
+    scrollbar-color: $error-darken-1;
+    scrollbar-color-hover: $error;
+    scrollbar-color-active: $error;
+}
+
+.box-row {
+    width: 100%;
+    height: auto;
+}
+
+HostBox {
+    width: auto;
+    height: auto;
+    border: round $error-darken-1;
+    padding: 0 1;
+    margin: 0 2 1 0;
+}
+
+HostBox:focus-within {
+    border: round $error;
+}
+
+.host-head {
+    width: 30;
+    height: 1;
+    margin-bottom: 1;
+}
+
+.host-head Static {
+    width: auto;
+}
+
+.host-name {
+    color: $text;
+    text-style: bold;
+    margin-right: 3;
+}
+
+HostBox .online  { color: $success; }
+
+HostBox .warning { color: $warning; }
+
+HostBox .offline { color: $text-muted; }
+
+ServiceRow {
+    width: 30;
+    height: 1;
+}
+
+ServiceRow:focus .svc-name {
+    color: $error;
+    text-style: bold underline;
+}
+
+ServiceRow:focus .svc-cursor {
+    text-opacity: 100%;
+}
+
+ServiceRow:focus .svc-branch {
+    color: $error;
+}
+
+ServiceRow Static {
+    height: 1;
+}
+
+.svc-cursor {
+    width: 2;
+    color: $error;
+    text-opacity: 0%;
+    text-style: bold;
+}
+
+.svc-branch { width: 4;  color: $error-darken-1; }
+
+.svc-name   { width: 13; color: $text; }
+
+.svc-port   { width: 7;  color: $error; }
+
+.svc-status { width: 4; }
+
+ServiceRow .up      { color: $success; }
+
+ServiceRow .warning { color: $warning; }
+
+ServiceRow .down    { color: $bad; }
+
+.svc-empty {
+    width: 100%;
+    margin-top: 2;
+    text-align: center;
+    color: $error;
+}
+
+ServiceRow .pending {
+    color: $text-muted;
+}

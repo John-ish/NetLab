@@ -1,0 +1,131 @@
+#host-empty, #log-empty {
+    display: none;
+    width: 100%;
+    height: 1fr;
+    margin-top: 2;
+    text-align: center;
+    color: $error;
+}
+
+#hosts-panel, #services-panel, #logs-panel {
+    width: 100%;
+    height: 100%;
+    padding: 0 1 1 1;
+    border: round $error-darken-1;
+    border-title-color: $error;
+    border-title-style: bold;
+    border-title-align: center;
+    background: $background;
+    border-subtitle-align: center;
+}
+
+#footer-bar {
+    height: auto;
+    min-height: 2;
+    padding: 0 1;
+    border-top: solid $error-darken-1;
+}
+
+#footer-keys {
+    width: 1fr;
+    height: auto;
+    min-height: 1;
+}
+
+#footer-stats {
+    width: auto;
+    height: 1;
+}
+
+#footer-bar Static {
+    width: auto;
+    height: 1;
+}
+
+#footer-bar .key {
+    color: $error;
+}
+
+#footer-bar .hint {
+    color: $text-muted;
+    margin: 0 4 0 1;
+}
+
+#footer-stats Static {
+    margin-left: 1;
+}
+
+#stat-total {
+    color: $text-muted;
+    margin-left: 0;
+}
+
+#stat-sep {
+    color: $text-muted;
+}
+
+#footer-bar .online  { color: $success; }
+
+#footer-bar .offline { color: $text; }
+
+#footer-bar .warning { color: $warning; }
+
+#search-bar {
+    height: 3;
+    padding: 0 1;
+    border: round $error-darken-1;
+}
+
+#search-bar:focus-within {
+    border: round $error;
+}
+
+#search-icon {
+    width: 3;
+    color: $error;
+}
+
+#search {
+    width: 1fr;
+    height: 1;
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+#search:focus {
+    border: none;
+}
+
+#search > .input--placeholder {
+    color: $error-darken-1;
+}
+
+#search-clear {
+    width: 1;
+    color: $error-darken-1;
+}
+
+#search-clear:hover {
+    color: $error;
+}
+
+#footer-bar .error { color: $bad; }
+
+#live.-paused {
+    color: $warning;
+}
+
+.svc-none {
+    width: auto;
+    height: 1;
+    color: $text-muted;
+}
+
+#live:hover {
+    text-style: underline;
+}
+
+#footer-bar .paused {
+    color: $warning;
+}

@@ -1,0 +1,19 @@
+MenuItem.-active Label {
+    color: $row-text;
+}
+
+#host-list > HostRow.-highlight .col-name {
+    color: $row-text;
+}
+
+#detail-services > ServiceItem.-highlight .col-name {
+    color: $row-text;
+}
+
+#home-menu > HomeItem.-highlight .home-label {
+    color: $row-text;
+}
+
+SettingRow:focus .set-label {
+    color: $row-text;
+}

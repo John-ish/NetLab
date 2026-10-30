@@ -1,0 +1,85 @@
+.col-cursor   { width: 3; padding-left: 1; }
+
+.col-name     { width: 5fr; }
+
+.col-status   { width: 4fr; }
+
+.col-services { width: 4fr; }
+
+.col-latency  { width: 3fr; }
+
+.col-updated  { width: 4fr; }
+
+#header {
+    height: 2;
+    margin-top: 1;
+    border-bottom: solid $error-darken-1;
+}
+
+#header Static {
+    color: $error;
+    text-style: bold;
+}
+
+#host-list {
+    height: 1fr;
+    border: none;
+    background: transparent;
+}
+
+#host-list:focus {
+    border: none;
+}
+
+HostRow {
+    layout: horizontal;
+    height: 1;
+    background: transparent;
+}
+
+HostRow .col-name     { color: $text; }
+
+HostRow .col-services { color: $error; }
+
+HostRow .col-updated  { color: $error; }
+
+HostRow .col-cursor {
+    color: $error;
+    text-opacity: 0%;
+    text-style: bold;
+}
+
+#host-list > HostRow.-highlight {
+    background: $row;
+    color: $text;
+}
+
+#host-list > HostRow.-highlight .col-cursor {
+    text-opacity: 100%;
+}
+
+HostRow .online  { color: $success; }
+
+HostRow .warning { color: $warning; }
+
+HostRow .offline { color: $text-muted; }
+
+HostRow .lat-good { color: $success; }
+
+HostRow .lat-ok   { color: $warning; }
+
+HostRow .lat-bad  { color: $bad; }
+
+HostRow .lat-none { color: $text-muted; }
+
+#live {
+    width: 100%;
+    height: 1;
+    text-align: right;
+    color: $success;
+    transition: color 400ms;
+}
+
+#live.-dim {
+    color: $live-dim;
+}

@@ -1,0 +1,50 @@
+Select > SelectCurrent,
+Select:focus > SelectCurrent,
+Select.-expanded > SelectCurrent {
+    border: none;
+    height: 1;
+    padding: 0 1;
+    background: $tint;
+    background-tint: transparent;
+}
+
+Select:focus > SelectCurrent,
+Select.-expanded > SelectCurrent {
+    background: $tint-hover;
+}
+
+SelectCurrent Static#label {
+    color: $error;
+    text-style: bold;
+}
+
+SelectCurrent .arrow {
+    color: $error;
+}
+
+Select > SelectOverlay {
+    constrain: inside inside;
+    min-width: 18;
+    border: round $error-darken-1;
+    background: $background;
+    color: $text;
+    scrollbar-size-vertical: 1;
+    scrollbar-background: $background;
+    scrollbar-background-hover: $background;
+    scrollbar-background-active: $background;
+    scrollbar-color: $error-darken-1;
+    scrollbar-color-hover: $error;
+    scrollbar-color-active: $error;
+}
+
+Select > SelectOverlay:focus {
+    border: round $error;
+    background-tint: transparent;
+}
+
+SelectOverlay > .option-list--option-highlighted,
+SelectOverlay:focus > .option-list--option-highlighted {
+    background: $row-hover;
+    color: $row-text;
+    text-style: bold;
+}
