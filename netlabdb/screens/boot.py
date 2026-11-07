@@ -11,11 +11,11 @@ from textual.widgets import Static
 
 from ..config import APP_VERSION, STYLE_PATH, TEXTUAL_VERSION
 from ..constants import HOST_ICON, SPINNER_FRAMES
+from ..dashboard import animation_logo, animation_tagline, boot_title, kind_of, mix_color
 from ..helpers import newtext, palette
 from ..state import SERVICES
 from ..store import store
 from ..theme import PALETTE
-from .startup import LOGO_LINES
 
 
 BOOT_LINE = 0.30
@@ -24,6 +24,8 @@ BOOT_FADE = 0.30
 BOOT_LOG_START = BOOT_LINE + BOOT_GROW + BOOT_FADE
 BOOT_STEP = 0.13
 BOOT_HOLD = 0.5
+TYPE_STEP = 0.03
+WHITE = TColor(255, 255, 255)
 
 
 class BootScreen(Screen):
@@ -90,7 +92,7 @@ class BootScreen(Screen):
         shown = min(len(self.entries), int(elapsed / BOOT_STEP) + 1)
         lines = [Text()]
         head = newtext()
-        head.append("  NETLAB DB", style=f"bold {pal['accent']}")
+        head.append(f"  {boot_title()}", style=f"bold {pal['accent']}")
         head.append(f"  BIOS v{APP_VERSION}", style="dim")
         lines.append(head)
         lines.append(newtext(f"  {platform.system()} · Python {platform.python_version()} · Textual {TEXTUAL_VERSION}", style="dim"))
@@ -137,18 +139,24 @@ class BootScreen(Screen):
             boot.update(self._log(t, width, palette(self.app)))
 
 
-class GlitchBootScreen(BootScreen):
-
-    NOISE = "░▒▓█▚▞▌▐#%&@01<>/\\|"
-    TAGLINE = "server monitoring terminal"
+class LogoBootScreen(BootScreen):
 
     def __init__(self):
         super().__init__()
-        self.logo_width = len(LOGO_LINES[0])
-        rng = random.Random(7)
-        self.settle = [0.2 + (c / self.logo_width) * 1.1 + rng.uniform(0, 0.3) for c in range(self.logo_width)]
         self.total = 3.0
-        self.tones = None
+        self.ready = False
+        self.lines = []
+        self.font = "block"
+        self.logo_width = 0
+        self.left = 0
+        self.tagline = ""
+        self.fill = self.shadow = self.accent = ""
+
+    def prepare(self, width: int) -> None:
+        pass
+
+    def compose_frame(self, t: float, width: int, height: int) -> Text:
+        raise NotImplementedError
 
     def _frame(self) -> None:
         t = time.monotonic() - self.begin
@@ -159,41 +167,192 @@ class GlitchBootScreen(BootScreen):
         if t >= self.total:
             self._finish()
             return
-        if self.tones is None:
-            self.tones = (PALETTE["fill"], PALETTE["shadow"], PALETTE["accent"])
-        boot.update(self._compose_frame(t, width, height))
+        if not self.ready:
+            self.lines, self.font, self.fill, self.shadow = animation_logo(width - 2)
+            self.logo_width = len(self.lines[0])
+            self.accent = PALETTE["accent"]
+            self.tagline = animation_tagline()
+            self.ready = True
+            self.prepare(width)
+        self.left = max(0, (width - self.logo_width) // 2)
+        boot.update(self.compose_frame(t, width, height))
 
-    def _compose_frame(self, t: float, width: int, height: int) -> Text:
-        fill, shadow, accent = self.tones
-        top = max(0, (height - 8) // 2)
-        left = max(0, (width - self.logo_width) // 2)
-        glitching = 0.3 < t < 1.9
-        lines = []
-        for row in range(height):
-            if top <= row < top + 6:
-                line = Text(no_wrap=True, overflow="crop")
-                shift = random.choice((-4, -3, 3, 4)) if glitching and random.random() < 0.12 else 0
-                line.append(" " * max(0, left + shift))
-                for column, char in enumerate(LOGO_LINES[row - top]):
-                    if t >= self.settle[column]:
-                        if char == "█":
-                            line.append(char, style=f"bold {fill}")
-                        else:
-                            line.append(char, style=shadow if char != " " else "")
-                    elif char != " " or random.random() < 0.03:
-                        line.append(random.choice(self.NOISE), style=random.choice((accent, "dim", fill)))
-                    else:
-                        line.append(" ")
-                lines.append(line)
-            elif row == top + 7:
-                typed = int(max(0.0, t - 1.7) / 0.03)
-                shown = self.TAGLINE[:typed]
-                cursor = "█" if int(t * 4) % 2 == 0 else " "
-                pad = " " * ((width - len(self.TAGLINE)) // 2)
-                lines.append(Text.assemble(pad, (shown, "dim"), (cursor, accent)))
+    def glyph_style(self, char: str) -> str:
+        kind = kind_of(char, self.font)
+        if kind == "fill":
+            return f"bold {self.fill}"
+        return self.shadow if kind == "shadow" else ""
+
+    def assemble(self, height: int, row, tag: Text) -> Text:
+        count = len(self.lines)
+        top = max(0, (height - count - 2) // 2)
+        out = []
+        for r in range(height):
+            if top <= r < top + count:
+                out.append(row(r - top))
+            elif r == top + count + 1:
+                out.append(tag)
             else:
-                lines.append(Text())
-        return Text("\n").join(lines)
+                out.append(Text())
+        return Text("\n").join(out)
+
+    def tag_line(self, width: int, typed: int, cursor: str) -> Text:
+        pad = " " * max(0, (width - len(self.tagline)) // 2)
+        return Text.assemble(pad, (self.tagline[:typed], "dim"), (cursor, self.accent))
+
+    def faded_tag(self, width: int, t: float, start: float) -> Text:
+        alpha = max(0.0, min(1.0, (t - start) / 0.6))
+        pad = " " * max(0, (width - len(self.tagline)) // 2)
+        return Text.assemble(pad, (self.tagline, mix_color(self.fill, PALETTE["bg"], 1 - 0.55 * alpha)))
+
+    def row_start(self) -> Text:
+        line = Text(no_wrap=True, overflow="crop")
+        line.append(" " * self.left)
+        return line
+
+
+class GlitchBootScreen(LogoBootScreen):
+
+    NOISE = "░▒▓█▚▞▌▐#%&@01<>/\\|"
+
+    def prepare(self, width: int) -> None:
+        rng = random.Random(7)
+        size = self.logo_width
+        self.settle = [0.2 + (c / size) * 1.1 + rng.uniform(0, 0.3) for c in range(size)]
+        self.total = max(3.0, 1.7 + len(self.tagline) * TYPE_STEP + 0.5)
+
+    def compose_frame(self, t: float, width: int, height: int) -> Text:
+        glitching = 0.3 < t < 1.9
+
+        def row(index: int) -> Text:
+            line = Text(no_wrap=True, overflow="crop")
+            shift = random.choice((-4, -3, 3, 4)) if glitching and random.random() < 0.12 else 0
+            line.append(" " * max(0, self.left + shift))
+            for column, char in enumerate(self.lines[index]):
+                if t >= self.settle[column]:
+                    line.append(char, style=self.glyph_style(char))
+                elif char != " " or random.random() < 0.03:
+                    line.append(random.choice(self.NOISE), style=random.choice((self.accent, "dim", self.fill)))
+                else:
+                    line.append(" ")
+            return line
+
+        typed = int(max(0.0, t - 1.7) / TYPE_STEP)
+        cursor = "█" if int(t * 4) % 2 == 0 else " "
+        return self.assemble(height, row, self.tag_line(width, typed, cursor))
+
+
+class SweepBootScreen(LogoBootScreen):
+
+    def prepare(self, width: int) -> None:
+        self.fade_end = 0.9
+        self.sweep_start = 0.7
+        self.sweep_time = 1.2
+        self.band = max(5, self.logo_width // 9)
+        self.slant = 2
+        self.tag_start = self.sweep_start + 0.5
+        self.total = self.sweep_start + self.sweep_time + 1.1
+        self.glow = {}
+
+    def glow_color(self, base: str, level: int) -> str:
+        key = (base, level)
+        if key not in self.glow:
+            self.glow[key] = mix_color(base, WHITE, level / 8 * 0.9)
+        return self.glow[key]
+
+    def compose_frame(self, t: float, width: int, height: int) -> Text:
+        bg = PALETTE["bg"]
+        k = min(1.0, t / self.fade_end)
+        k = k * k * (3 - 2 * k)
+        fill = mix_color(self.fill, bg, 1 - k)
+        shadow = mix_color(self.shadow, bg, 1 - k)
+        progress = (t - self.sweep_start) / self.sweep_time
+        span = self.logo_width + len(self.lines) * self.slant + 2 * self.band
+        center = -self.band + progress * span
+
+        def row(index: int) -> Text:
+            line = self.row_start()
+            offset = index * self.slant
+            for column, char in enumerate(self.lines[index]):
+                kind = kind_of(char, self.font)
+                if kind is None:
+                    line.append(char)
+                    continue
+                base = fill if kind == "fill" else shadow
+                distance = abs(column + offset - center)
+                if distance < self.band:
+                    level = round((1 - distance / self.band) * 8)
+                    line.append(char, style=f"bold {self.glow_color(base, level)}")
+                else:
+                    line.append(char, style=f"bold {base}" if kind == "fill" else base)
+            return line
+
+        return self.assemble(height, row, self.faded_tag(width, t, self.tag_start))
+
+
+class SlideBootScreen(LogoBootScreen):
+
+    def prepare(self, width: int) -> None:
+        self.stagger = 0.09
+        self.duration = 0.8
+        self.tag_start = len(self.lines) * self.stagger + self.duration + 0.1
+        self.total = self.tag_start + 1.4
+
+    def compose_frame(self, t: float, width: int, height: int) -> Text:
+        bg = PALETTE["bg"]
+
+        def row(index: int) -> Text:
+            progress = max(0.0, min(1.0, (t - index * self.stagger) / self.duration))
+            ease = 1 - (1 - progress) ** 3
+            direction = -1 if index % 2 == 0 else 1
+            position = self.left + direction * round((1 - ease) * width)
+            fade = (1 - ease) * 0.7
+            fill = mix_color(self.fill, bg, fade)
+            shadow = mix_color(self.shadow, bg, fade)
+            start, skip = max(0, position), max(0, -position)
+            visible = self.lines[index][skip:skip + max(0, width - start)]
+            line = Text(no_wrap=True, overflow="crop")
+            line.append(" " * start)
+            for char in visible:
+                kind = kind_of(char, self.font)
+                if kind == "fill":
+                    line.append(char, style=f"bold {fill}")
+                elif kind == "shadow":
+                    line.append(char, style=shadow)
+                else:
+                    line.append(char)
+            return line
+
+        return self.assemble(height, row, self.faded_tag(width, t, self.tag_start))
+
+
+class FadeBootScreen(LogoBootScreen):
+
+    def prepare(self, width: int) -> None:
+        self.fade_end = 1.3
+        self.tag_start = 1.2
+        self.total = self.fade_end + 1.4
+
+    def compose_frame(self, t: float, width: int, height: int) -> Text:
+        bg = PALETTE["bg"]
+        k = min(1.0, t / self.fade_end)
+        k = k * k * (3 - 2 * k)
+        fill = mix_color(self.fill, bg, 1 - k)
+        shadow = mix_color(self.shadow, bg, 1 - k)
+
+        def row(index: int) -> Text:
+            line = self.row_start()
+            for char in self.lines[index]:
+                kind = kind_of(char, self.font)
+                if kind == "fill":
+                    line.append(char, style=f"bold {fill}")
+                elif kind == "shadow":
+                    line.append(char, style=shadow)
+                else:
+                    line.append(char)
+            return line
+
+        return self.assemble(height, row, self.faded_tag(width, t, self.tag_start))
 
 
 class ScanBootScreen(BootScreen):
@@ -233,7 +392,7 @@ class ScanBootScreen(BootScreen):
         done = max(0, min(total, int((t - self.start) / self.step))) if t >= self.start else 0
         spin = SPINNER_FRAMES[int(t * 15) % len(SPINNER_FRAMES)]
         head = newtext()
-        head.append("  NETLAB DB", style=f"bold {pal['accent']}")
+        head.append(f"  {boot_title()}", style=f"bold {pal['accent']}")
         head.append("  network scan", style="dim")
         status = newtext()
         if done < total:
@@ -273,4 +432,7 @@ BOOT_STYLES = {
     "crt": BootScreen,
     "glitch": GlitchBootScreen,
     "scan": ScanBootScreen,
+    "sweep": SweepBootScreen,
+    "slide": SlideBootScreen,
+    "fade": FadeBootScreen,
 }

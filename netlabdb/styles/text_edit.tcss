@@ -1,0 +1,57 @@
+TextEditScreen {
+    align: center middle;
+    background: $shade;
+}
+
+#text-panel {
+    width: 64;
+    max-width: 90%;
+    height: auto;
+    padding: 0 2 1 2;
+    border: round $error;
+    background: $background;
+    border-title-color: $error;
+    border-title-style: bold;
+    border-title-background: $background;
+    border-title-align: center;
+    border-subtitle-align: center;
+    border-subtitle-background: $background;
+}
+
+#text-body {
+    height: auto;
+    margin: 1 0 0 0;
+    color: $text-muted;
+}
+
+#text-panel .field-row {
+    margin-top: 1;
+}
+
+#text-buttons {
+    height: 1;
+    margin-top: 1;
+    align-horizontal: center;
+}
+
+#text-buttons Button {
+    width: auto;
+    min-width: 0;
+    height: 1;
+    border: none;
+    padding: 0 2;
+    margin: 0 1;
+    background: $tint;
+    color: $text;
+    text-style: none;
+}
+
+#text-buttons Button:hover {
+    background: $tint-hover;
+}
+
+#text-buttons Button:focus {
+    background: $error;
+    color: $on-accent;
+    text-style: bold;
+}

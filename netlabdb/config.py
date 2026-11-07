@@ -23,6 +23,7 @@ STYLE_FILES = [
     "service_detail.tcss",
     "sudo.tcss",
     "interval.tcss",
+    "text_edit.tcss",
     "toast.tcss",
     "startup.tcss",
     "settings.tcss",
@@ -34,6 +35,7 @@ STYLE_PATH = [STYLES_DIR / name for name in STYLE_FILES]
 
 SETTINGS_PATH = Path.home() / ".netlabdb" / "settings.json"
 DATA_DIR = SETTINGS_PATH.parent
+LAYOUT_PATH = DATA_DIR / "dashboard.json"
 SSH_DIR = DATA_DIR / "ssh"
 KEY_PATH = SSH_DIR / "netlab_ed25519"
 KEY_PUB_PATH = SSH_DIR / "netlab_ed25519.pub"
