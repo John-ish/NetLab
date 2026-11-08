@@ -61,6 +61,8 @@ MetricDetailScreen {
 
 .range-opt:hover {
     background: $tint-hover;
+    color: $error;
+    text-style: bold;
 }
 
 .range-opt.-active {

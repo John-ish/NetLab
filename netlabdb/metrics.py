@@ -1,6 +1,7 @@
 import random
 import time
 import zlib
+from array import array
 from collections import deque
 from datetime import datetime, timedelta
 
@@ -8,6 +9,30 @@ from .constants import HISTORY_LENGTH, SSH_STALE_SECONDS
 from .helpers import fmt_mb, fmt_ms, fmt_num, fmt_pct, nice_ceiling
 from .state import SERVICE_LIVE
 from .store import store
+
+
+class Series:
+
+    __slots__ = ("data", "limit")
+
+    def __init__(self, limit: int = HISTORY_LENGTH):
+        self.data = array("d")
+        self.limit = limit
+
+    def append(self, value: float) -> None:
+        data = self.data
+        data.append(value)
+        if len(data) > self.limit:
+            del data[0]
+
+    def clear(self) -> None:
+        del self.data[:]
+
+    def __len__(self) -> int:
+        return len(self.data)
+
+    def __iter__(self):
+        return iter(self.data)
 
 
 def _profile(os_name, kernel, cpu_model, cores, mem_gb, uptime_days, cpu, mem, disk,
@@ -119,7 +144,7 @@ class HostMetrics(TelemetryState):
         self.load = [self.cpu / 100 * cores] * 3
         self.disks = [list(d) for d in self.profile["disks"]]
         self.disk_base = float(self.disks[0][4])
-        self.history = {k: deque(maxlen=HISTORY_LENGTH) for k in ("cpu", "mem", "disk", "io", "rx", "tx", "latency", "gpu")}
+        self.history = {k: Series() for k in ("cpu", "mem", "disk", "io", "rx", "tx", "latency", "gpu")}
         self.activity = deque(maxlen=40)
         self.paused = False
         self.checks = 0
@@ -335,7 +360,7 @@ class ServiceMetrics(TelemetryState):
         self.key = (host, name, port)
         self.state = next((s for n, p, s in store.services_of(host) if (n, p) == (name, port)), "pending")
         self.latency = None
-        self.history = {k: deque(maxlen=HISTORY_LENGTH) for k in ("conns", "latency", "cpu", "mem")}
+        self.history = {k: Series() for k in ("conns", "latency", "cpu", "mem")}
         self.checks = deque(maxlen=30)
         self.total_checks = self.passed = 0
         self.started = self.last_tick = time.monotonic()

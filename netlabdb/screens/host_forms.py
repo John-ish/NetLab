@@ -80,8 +80,7 @@ class AddHostScreen(ModalScreen):
 
             yield Static("SSH port (optional)", classes="field-label")
             with Horizontal(classes="field-row"):
-                yield Input(value=self.initial["ssh_port"], placeholder="22", id="in-ssh-port",
-                            max_length=5, restrict=r"[0-9]*")
+                yield Input(value=self.initial["ssh_port"], placeholder="22", id="in-ssh-port")
                 yield Static("", id="mark-ssh-port", classes="field-mark")
             yield Static("", id="err-ssh-port", classes="field-error")
 
@@ -134,7 +133,9 @@ class AddHostScreen(ModalScreen):
     def _check_ssh_port(self, port: str) -> tuple[str, str]:
         if not port:
             return "blank", ""
-        if not 1 <= int(port) <= 65535:
+        if not (port.isascii() and port.isdigit()):
+            return "error", "Port must be a number"
+        if len(port) > 5 or not 1 <= int(port) <= 65535:
             return "error", "Port must be between 1 and 65535"
         return "ok", ""
 

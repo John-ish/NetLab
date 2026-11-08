@@ -55,8 +55,7 @@ class SshSetupScreen(ModalScreen):
                 yield Static("", classes="field-mark")
             yield Static("SSH port", classes="field-label")
             with Horizontal(classes="field-row"):
-                yield Input(value=self.initial_port, placeholder="22", id="ssh-port",
-                            max_length=5, restrict=r"[0-9]*")
+                yield Input(value=self.initial_port, placeholder="22", id="ssh-port")
                 yield Static("", classes="field-mark")
             yield Static("", id="ssh-steps")
             yield Static("Server password (used once to install the key, never stored)",
@@ -143,11 +142,15 @@ class SshSetupScreen(ModalScreen):
     def _start(self) -> None:
         user = self.query_one("#ssh-user", Input).value.strip()
         port_text = self.query_one("#ssh-port", Input).value.strip()
-        port = int(port_text) if port_text else SSH_DEFAULT_PORT
         if not SSH_USER_RE.match(user):
             self.note, self.phase = "Enter a valid SSH user name", "error"
             self._sync()
             return
+        if port_text and not (port_text.isascii() and port_text.isdigit() and len(port_text) <= 5):
+            self.note, self.phase = "Port must be a number between 1 and 65535", "error"
+            self._sync()
+            return
+        port = int(port_text) if port_text else SSH_DEFAULT_PORT
         if not 1 <= port <= 65535:
             self.note, self.phase = "Port must be between 1 and 65535", "error"
             self._sync()

@@ -11,7 +11,8 @@ from ..dashboard import ensure_layout_file, open_in_editor
 from ..helpers import nav_hint_text, palette
 from ..presets import PRESETS
 from ..settings import (
-    DASHBOARD_KEYS, ON_OFF, SETTING_DEFAULTS, SETTING_DEFINITIONS, TEXT_LIMITS, inactive, settings,
+    DASHBOARD_KEYS, ON_OFF, SETTING_DEFAULTS, SETTING_DEFINITIONS, SETTING_PARENTS, TEXT_LIMITS,
+    inactive, settings,
 )
 from ..widgets import KeyBar, SvcScroll
 from .confirm_action import ActionConfirmScreen
@@ -48,12 +49,14 @@ class SettingRow(Horizontal, can_focus=True):
             self.key = key
             self.value = value
 
-    def __init__(self, key: str, label: str, options: list | None, description: str, value: str):
+    def __init__(self, key: str, label: str, options: list | None, description: str, value: str,
+                 branch: str = ""):
         super().__init__()
         self.key = key
         self.label = label
         self.options = options
         self.description = description
+        self.branch = branch
         self.text = value if options is None else ""
         self.index = 0 if options is None else next((i for i, (_, v) in enumerate(options) if v == value), 0)
 
@@ -61,9 +64,16 @@ class SettingRow(Horizontal, can_focus=True):
     def value(self) -> str:
         return self.text if self.options is None else self.options[self.index][1]
 
+    def _label(self, pal: dict) -> Text:
+        text = Text(no_wrap=True, overflow="ellipsis")
+        if self.branch:
+            text.append(self.branch, style=f"dim {pal['accent']}")
+        text.append(self.label)
+        return text
+
     def compose(self) -> ComposeResult:
         yield Static("❱", classes="set-cursor")
-        yield Static(self.label, classes="set-label")
+        yield Static(self._label(palette(self.app)), classes="set-label")
         yield Static("", classes="set-value")
 
     def on_mount(self) -> None:
@@ -92,6 +102,10 @@ class SettingRow(Horizontal, can_focus=True):
         target = self.query(".set-value")
         if target:
             target.first(Static).update(text)
+        if self.branch:
+            name = self.query(".set-label")
+            if name:
+                name.first(Static).update(self._label(pal))
 
     def set_value(self, value: str) -> None:
         if self.options is None:
@@ -145,11 +159,17 @@ class SettingsScreen(Screen):
         with Vertical(id="settings-panel"):
             with SvcScroll(id="settings-scroll"):
                 section = None
-                for key, group, label, options, description in SETTING_DEFINITIONS:
+                definitions = SETTING_DEFINITIONS
+                for index, (key, group, label, options, description) in enumerate(definitions):
                     if group != section:
                         section = group
                         yield Static(group.upper(), classes="set-section")
-                    yield SettingRow(key, label, options, description, settings.get(key))
+                    parent = SETTING_PARENTS.get(key)
+                    branch = ""
+                    if parent:
+                        following = definitions[index + 1][0] if index + 1 < len(definitions) else None
+                        branch = "├─ " if SETTING_PARENTS.get(following) == parent else "└─ "
+                    yield SettingRow(key, label, options, description, settings.get(key), branch)
             yield Static("", id="set-help")
             with Horizontal(id="footer-bar"):
                 yield KeyBar(SETTINGS_ACTION_EVENTS)

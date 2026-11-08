@@ -41,8 +41,10 @@
     overflow: hidden;
 }
 
-DetailCard:focus {
+DetailCard:hover, DetailCard:focus {
     border: round $error;
+    border-title-color: $on-accent;
+    border-title-background: $error;
     border-subtitle-color: $error;
 }
 
@@ -159,4 +161,16 @@ ServiceItem .pending { color: $text-muted; }
 
 #detail-services > ServiceItem.-highlight .col-cursor {
     text-opacity: 100%;
+}
+
+#detail-services > ServiceItem:hover {
+    background: $tint-hover;
+}
+
+#detail-services > ServiceItem:hover .col-cursor {
+    text-opacity: 100%;
+}
+
+#detail-services > ServiceItem:hover .col-name {
+    text-style: bold;
 }

@@ -290,42 +290,6 @@ class SweepBootScreen(LogoBootScreen):
         return self.assemble(height, row, self.faded_tag(width, t, self.tag_start))
 
 
-class SlideBootScreen(LogoBootScreen):
-
-    def prepare(self, width: int) -> None:
-        self.stagger = 0.09
-        self.duration = 0.8
-        self.tag_start = len(self.lines) * self.stagger + self.duration + 0.1
-        self.total = self.tag_start + 1.4
-
-    def compose_frame(self, t: float, width: int, height: int) -> Text:
-        bg = PALETTE["bg"]
-
-        def row(index: int) -> Text:
-            progress = max(0.0, min(1.0, (t - index * self.stagger) / self.duration))
-            ease = 1 - (1 - progress) ** 3
-            direction = -1 if index % 2 == 0 else 1
-            position = self.left + direction * round((1 - ease) * width)
-            fade = (1 - ease) * 0.7
-            fill = mix_color(self.fill, bg, fade)
-            shadow = mix_color(self.shadow, bg, fade)
-            start, skip = max(0, position), max(0, -position)
-            visible = self.lines[index][skip:skip + max(0, width - start)]
-            line = Text(no_wrap=True, overflow="crop")
-            line.append(" " * start)
-            for char in visible:
-                kind = kind_of(char, self.font)
-                if kind == "fill":
-                    line.append(char, style=f"bold {fill}")
-                elif kind == "shadow":
-                    line.append(char, style=shadow)
-                else:
-                    line.append(char)
-            return line
-
-        return self.assemble(height, row, self.faded_tag(width, t, self.tag_start))
-
-
 class FadeBootScreen(LogoBootScreen):
 
     def prepare(self, width: int) -> None:
@@ -433,6 +397,5 @@ BOOT_STYLES = {
     "glitch": GlitchBootScreen,
     "scan": ScanBootScreen,
     "sweep": SweepBootScreen,
-    "slide": SlideBootScreen,
     "fade": FadeBootScreen,
 }

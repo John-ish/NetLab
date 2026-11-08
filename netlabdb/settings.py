@@ -86,12 +86,29 @@ SETTING_DEFINITIONS = [
      "Plays an animation of your choice on startup."),
     ("startup_style", "Startup", "Startup style",
      [("CRT power-on", "crt"), ("Glitch reveal", "glitch"), ("Network scan", "scan"),
-      ("Neon sweep", "sweep"), ("Slide in", "slide"), ("Fade in", "fade"), ("Random", "random")],
-     "Which animation plays at launch. 'Glitch reveal', 'Neon sweep', 'Slide in' and 'Fade in' use your dashboard's logo and tagline. Press [p] to preview it."),
+      ("Neon sweep", "sweep"), ("Fade in", "fade"), ("Random", "random")],
+     "Which animation plays at launch. 'Glitch reveal', 'Neon sweep' and 'Fade in' use your dashboard's logo and tagline. Press [p] to preview it."),
     ("default_screen", "Startup", "Default screen",
      [("Dashboard", "startup"), ("Hosts", "hosts"), ("Services", "services"), ("Logs", "logs")],
      "The screen shown right after launch."),
 ]
+
+SETTING_PARENTS = {
+    "crt_intensity": "crt_effect",
+    "crt_flicker": "crt_effect",
+    "crt_glow": "crt_effect",
+    "crt_roll": "crt_effect",
+    "logo_font": "logo_text",
+    "logo_color": "logo_text",
+    "show_version": "tagline",
+    "show_cursor": "tagline",
+    "activity_lines": "show_activity",
+    "tip_text": "tip_mode",
+    "tip_seconds": "tip_mode",
+    "footer_left_text": "footer_left",
+    "footer_right_text": "footer_right",
+    "startup_style": "startup_animation",
+}
 
 SETTING_DEFAULTS = {
     "theme": "terminal",
@@ -158,6 +175,8 @@ def inactive(key: str, get) -> bool:
         return get("footer_left") != "custom"
     if key == "footer_right_text":
         return get("footer_right") != "custom"
+    if key == "startup_style":
+        return get("startup_animation") != "on"
     return False
 
 
