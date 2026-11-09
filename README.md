@@ -17,6 +17,12 @@ Supports Windows and Linux.
 - **Customizable UI** – Choose themes, dashboard layouts, colors and CRT effects.
 
 ## Screenshots
+| | |
+|---|---|
+| **Dashboard**![Dashboard](docs/Dashboards/default.png) | **Hosts**![Hosts](docs/hosts.png) |
+| **Host details**![Host details](docs/hosts_details.png) | **Clickable Widgets**![Clickable Widgets](docs/clickable_widgets.png) |
+| **Services**![Services](docs/services.png) | **Service details**![Service details](docs/service_details.png) |
+| **Logs**![Logs](docs/logs.png) | **Settings**![Settings](docs/settings.png) |
 
 ## Installation
 
