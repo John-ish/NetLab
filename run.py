@@ -1,3 +1,4 @@
-from netlabdb.app import main
+from netlabdb.bootstrap import launch
 
-main()
+launch()
+

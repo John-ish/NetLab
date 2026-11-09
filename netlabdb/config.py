@@ -1,4 +1,5 @@
 import getpass
+import json
 import os
 import subprocess
 import sys
@@ -36,6 +37,7 @@ STYLE_PATH = [STYLES_DIR / name for name in STYLE_FILES]
 SETTINGS_PATH = Path.home() / ".netlabdb" / "settings.json"
 DATA_DIR = SETTINGS_PATH.parent
 LAYOUT_PATH = DATA_DIR / "dashboard.json"
+DB_PATH = DATA_DIR / "database.json"
 SSH_DIR = DATA_DIR / "ssh"
 KEY_PATH = SSH_DIR / "netlab_ed25519"
 KEY_PUB_PATH = SSH_DIR / "netlab_ed25519.pub"
@@ -49,18 +51,39 @@ try:
 except PackageNotFoundError:
     TEXTUAL_VERSION = "?"
 
-_DB_HOST = os.environ.get("NETLAB_DB_HOST", "localhost")
-_DB_LOCAL = _DB_HOST in ("localhost", "127.0.0.1", "::1") or _DB_HOST.startswith("/")
-DB_CONFIG = {
-    "host": _DB_HOST,
-    "sslmode": os.environ.get("NETLAB_DB_SSLMODE") or ("prefer" if _DB_LOCAL else "require"),
-    "port": os.environ.get("NETLAB_DB_PORT", "5432"),
-    "dbname": os.environ.get("NETLAB_DB_NAME", "net-lab-db"),
-    "user": os.environ.get("NETLAB_DB_USER", "postgres"),
-    "connect_timeout": 3,
-}
-if os.environ.get("NETLAB_DB_PASSWORD"):
-    DB_CONFIG["password"] = os.environ["NETLAB_DB_PASSWORD"]
+
+def default_sslmode(host: str) -> str:
+    local = host in ("localhost", "127.0.0.1", "::1") or host.startswith("/")
+    return "prefer" if local else "require"
+
+
+def load_db_config() -> dict:
+    try:
+        saved = json.loads(DB_PATH.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        saved = {}
+    if not isinstance(saved, dict):
+        saved = {}
+
+    def pick(variable: str, key: str, default: str) -> str:
+        return os.environ.get(variable) or str(saved.get(key) or "") or default
+
+    host = pick("NETLAB_DB_HOST", "host", "localhost")
+    config = {
+        "host": host,
+        "sslmode": pick("NETLAB_DB_SSLMODE", "sslmode", "") or default_sslmode(host),
+        "port": pick("NETLAB_DB_PORT", "port", "5432"),
+        "dbname": pick("NETLAB_DB_NAME", "dbname", "net-lab-db"),
+        "user": pick("NETLAB_DB_USER", "user", "postgres"),
+        "connect_timeout": 3,
+    }
+    password = pick("NETLAB_DB_PASSWORD", "password", "")
+    if password:
+        config["password"] = password
+    return config
+
+
+DB_CONFIG = load_db_config()
 
 DB_STATUS = {"online": "ACTIVE", "warning": "INACTIVE", "offline": "OFFLINE"}
 APP_STATUS = {value: key for key, value in DB_STATUS.items()}

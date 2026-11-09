@@ -1,3 +1,3 @@
-from .app import main
+from .bootstrap import launch
 
-main()
+launch()

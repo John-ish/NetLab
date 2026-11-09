@@ -344,7 +344,7 @@ class AccessScreen(ModalScreen):
                 [("Hidden · sudo password to reveal", "hidden"), ("Always visible", "visible")],
                 value="visible" if self.saved["visible"] else "hidden", allow_blank=False, id="sel-visible",
             )
-            yield Static("Stored as plain text in the database.", classes="del-note")
+            yield Static("Stored encrypted in the database.", classes="del-note")
             with Horizontal(id="access-buttons"):
                 yield Button("Save", id="btn-save")
                 yield Button("Remove", id="btn-remove")
